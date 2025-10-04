@@ -152,14 +152,6 @@ export const forumApi = {
         const authStore = useAuthStore();
         const currentUser = authStore.user;
 
-        const getAvatarUrl = (avatar: string | undefined) => {
-            if (!avatar) return undefined;
-            if (avatar.startsWith('http')) return avatar;
-            if (avatar.startsWith('/'))
-                return `https://clearless-hapi.vercel.app${avatar}`;
-            return `https://clearless-hapi.vercel.app/${avatar}`;
-        };
-
         return {
             id: commentData.id,
             content: commentData.content,
@@ -173,9 +165,8 @@ export const forumApi = {
                 commentData.userFullname ||
                 commentData.username ||
                 commentData.owner,
-            userAvatar: getAvatarUrl(
-                currentUser?.avatar || commentData.userAvatar
-            ),
+            userAvatar: currentUser?.avatar || commentData.userAvatar,
+
             date: commentData.date || new Date().toISOString(),
             threadId: data.threadId,
             isLiked: false,
@@ -229,14 +220,6 @@ export const forumApi = {
         const authStore = useAuthStore();
         const currentUser = authStore.user;
 
-        const getAvatarUrl = (avatar: string | undefined) => {
-            if (!avatar) return undefined;
-            if (avatar.startsWith('http')) return avatar;
-            if (avatar.startsWith('/'))
-                return `https://clearless-hapi.vercel.app${avatar}`;
-            return `https://clearless-hapi.vercel.app/${avatar}`;
-        };
-
         return {
             id: replyData.id,
             content: replyData.content,
@@ -250,9 +233,7 @@ export const forumApi = {
                 replyData.userFullname ||
                 replyData.username ||
                 replyData.owner,
-            userAvatar: getAvatarUrl(
-                currentUser?.avatar || replyData.userAvatar
-            ),
+            userAvatar: currentUser?.avatar || replyData.userAvatar,
             date: replyData.date || new Date().toISOString(),
             threadId: data.threadId,
             commentId: data.commentId,
