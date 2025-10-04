@@ -31,10 +31,3 @@ export interface ThreadsResponse {
         };
     };
 }
-
-export interface SingleThreadResponse {
-    status: string;
-    data: {
-        thread: Thread;
-    };
-}

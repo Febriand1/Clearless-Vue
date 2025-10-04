@@ -1,6 +1,6 @@
 export const API_CONFIG = {
     TIMEOUT: 10000,
-    BASE_URL: '/api',
+    BASE_URL: import.meta.env.VITE_API_URL,
 } as const;
 
 export const HTTP_STATUS = {

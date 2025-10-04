@@ -190,20 +190,24 @@ export const useForumStore = defineStore('forum', () => {
     const totalItems = computed(() => pagination.value.total);
 
     return {
+        // State
         threads,
         currentThread,
         comments,
         loading,
         pagination,
+
         fetchThreads,
         fetchThread,
         createThread,
         createComment,
         createReply,
+
         updateThreadLikeState,
         updateCommentLikeState,
         updateReplyLikeState,
         syncLikeData,
+
         totalPages,
         hasNextPage,
         hasPrevPage,
