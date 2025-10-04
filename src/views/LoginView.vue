@@ -1,11 +1,5 @@
 <template>
-    <Layout>
-        <Hero
-            title="Welcome Back"
-            description="Sign in to your account to continue the conversation"
-            svgPath="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-        />
-
+    <Layout :hero="hero">
         <div class="max-w-md mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <div
                 class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
@@ -43,14 +37,17 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores';
 import type { LoginCredentials, FormState } from '@/types';
 import { validateLoginCredentials } from '@/utils/validation';
-import Layout from '@/views/Layout.vue';
-import FormHeader from '@/components/FormHeader.vue';
-import Footer from '@/components/Footer.vue';
-import FormInput from '@/components/FormInput.vue';
-import Hero from '@/components/Hero.vue';
+import { FormHeader, Footer, FormInput, Layout } from '@/components';
+
+const hero = {
+    title: 'Welcome Back',
+    description: 'Sign in to your account to continue the conversation',
+    svgPath:
+        'M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1',
+};
 
 const router = useRouter();
 const authStore = useAuthStore();

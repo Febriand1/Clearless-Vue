@@ -1,10 +1,5 @@
 <template>
-    <Layout>
-        <Hero
-            title="Profile Settings"
-            description="Manage your account information and preferences"
-            svgPath="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-        />
+    <Layout :hero="hero">
         <div class="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div
                 class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
@@ -354,12 +349,17 @@
 
 <script setup lang="ts">
 import { reactive, computed, onMounted, ref } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores';
 import type { UpdateProfileData, FormState } from '@/types';
 import { validateProfileUpdateData } from '@/utils/validation';
-import Hero from '@/components/Hero.vue';
-import FormHeader from '@/components/FormHeader.vue';
-import Layout from '@/views/Layout.vue';
+import { FormHeader, Layout } from '@/components';
+
+const hero = {
+    title: 'Profile Settings',
+    description: 'Manage your account information and preferences',
+    svgPath:
+        'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
+};
 
 const authStore = useAuthStore();
 const showSuccessMessage = ref(false);

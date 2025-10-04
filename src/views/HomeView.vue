@@ -1,10 +1,5 @@
 <template>
-    <Layout>
-        <Hero
-            title="Community Discussions"
-            description="Discover, share, and engage with the latest conversations in our community"
-            svgPath="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-        />
+    <Layout :hero="hero">
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div
                 v-if="forumStore.loading"
@@ -81,15 +76,16 @@
 <script setup lang="ts">
 import { onMounted, onActivated, watch, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
-import { useForumStore } from '@/stores/forum';
-import { useLikeStore } from '@/stores/likeStore';
+import { useAuthStore, useLikeStore, useForumStore } from '@/stores';
+import { ThreadCard, EmptyState, Pagination, Layout } from '@/components';
 import type { LikeState } from '@/types';
-import Layout from '@/views/Layout.vue';
-import ThreadCard from '@/components/ThreadCard.vue';
-import EmptyState from '@/components/EmptyState.vue';
-import Pagination from '@/components/Pagination.vue';
-import Hero from '@/components/Hero.vue';
+
+const hero = {
+    title: 'Community Discussions',
+    description: 'Discover, share, and engage with the latest conversations',
+    svgPath:
+        'M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z',
+};
 
 const route = useRoute();
 const authStore = useAuthStore();

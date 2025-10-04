@@ -59,7 +59,7 @@
                 :thread-id="threadId"
             />
         </div>
-        
+
         <div v-if="commentCount > comments.length" class="mt-6 text-center">
             <button
                 @click="handleLoadMore"
@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 import type { Comment } from '@/types';
-import CommentItem from '@/components/CommentItem.vue';
+import { CommentItem } from '@/components';
 
 interface Props {
     threadId: string;

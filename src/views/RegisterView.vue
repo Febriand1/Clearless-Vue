@@ -1,11 +1,5 @@
 <template>
-    <Layout>
-        <Hero
-            title="Join Our Community"
-            description="Create your account to start discussing"
-            svgPath="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-        />
-
+    <Layout :hero="hero">
         <div class="max-w-md mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <div
                 class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
@@ -43,14 +37,17 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores';
 import type { RegisterCredentials, FormState } from '@/types';
 import { validateRegisterCredentials } from '@/utils/validation';
-import Layout from '@/views/Layout.vue';
-import FormHeader from '@/components/FormHeader.vue';
-import Footer from '@/components/Footer.vue';
-import FormInput from '@/components/FormInput.vue';
-import Hero from '@/components/Hero.vue';
+import { FormHeader, Footer, FormInput, Layout } from '@/components';
+
+const hero = {
+    title: 'Join Our Community',
+    description: 'Create your account to start discussing',
+    svgPath:
+        'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z',
+};
 
 const router = useRouter();
 const authStore = useAuthStore();

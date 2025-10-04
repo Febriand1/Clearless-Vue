@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import Navbar from './Navbar.vue';
+import { Navbar } from '@/components';
 
 defineProps<{
     title: string;

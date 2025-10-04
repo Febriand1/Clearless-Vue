@@ -169,11 +169,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { useForumStore } from '@/stores/forum';
-import { useAuthStore } from '@/stores/auth';
-import { useLikeStore } from '@/stores/likeStore';
-import CommentForm from './CommentForm.vue';
+import { useForumStore, useAuthStore, useLikeStore } from '@/stores';
 import type { Comment } from '@/types';
+import { CommentForm } from '@/components';
 
 interface Props {
     comment: Comment;

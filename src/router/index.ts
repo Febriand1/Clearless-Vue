@@ -30,7 +30,7 @@ const router = createRouter({
             meta: { requiresAuth: true, title: 'Clearless - Thread' },
         },
         {
-            path: '/create-thread',
+            path: '/thread/create',
             name: 'CreateThread',
             component: () => import('@/views/CreateThreadView.vue'),
             meta: { requiresAuth: true, title: 'Clearless - Create Thread' },

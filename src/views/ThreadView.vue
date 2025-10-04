@@ -1,10 +1,5 @@
 <template>
-    <Layout>
-        <Hero
-            title="Discussion Thread"
-            description="Join the conversation and share your thoughts"
-            svgPath="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-        />
+    <Layout :hero="hero">
         <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div v-if="currentThread" class="mb-6">
                 <div
@@ -781,14 +776,16 @@
 <script setup lang="ts">
 import { onMounted, watch, ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
-import { useForumStore } from '@/stores/forum';
-import { useLikeStore } from '@/stores/likeStore';
+import { useAuthStore, useForumStore, useLikeStore } from '@/stores';
+import { CommentForm, CommentsSection, Layout } from '@/components';
 import { formatDate } from '@/utils/dateUtils';
-import CommentForm from '@/components/CommentForm.vue';
-import CommentsSection from '@/components/CommentsSection.vue';
-import Hero from '@/components/Hero.vue';
-import Layout from '@/views/Layout.vue';
+
+const hero = {
+    title: 'Discussion Thread',
+    description: 'Join the conversation and share your thoughts',
+    svgPath:
+        'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
+};
 
 const route = useRoute();
 const router = useRouter();

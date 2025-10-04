@@ -1,5 +1,5 @@
 import api from '@/utils/axiosConfig';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores';
 import type {
     Thread,
     Comment,

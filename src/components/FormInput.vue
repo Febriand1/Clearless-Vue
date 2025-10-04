@@ -33,9 +33,7 @@
 
 <script setup lang="ts">
 import type { FormState } from '@/types';
-import InputField from '@/components/InputField.vue';
-import GeneralError from '@/components/GeneralError.vue';
-import SubmitButton from '@/components/SubmitButton.vue';
+import { InputField, GeneralError, SubmitButton } from '@/components';
 
 interface Props {
     form: Record<string, any>;

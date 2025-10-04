@@ -1,10 +1,5 @@
 <template>
-    <Layout>
-        <Hero
-            title="Create New Discussion"
-            description="Share your thoughts and start meaningful conversations with the community"
-            svgPath="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-        />
+    <Layout :hero="hero">
         <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div
                 class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
@@ -185,13 +180,18 @@
 <script setup lang="ts">
 import { reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useForumStore } from '@/stores/forum';
-import { useAuthStore } from '@/stores/auth';
+import { useForumStore, useAuthStore } from '@/stores';
 import type { CreateThreadData, FormState } from '@/types';
+import { FormHeader, Layout } from '@/components';
 import { validateCreateThreadData } from '@/utils/validation';
-import Hero from '@/components/Hero.vue';
-import FormHeader from '@/components/FormHeader.vue';
-import Layout from '@/views/Layout.vue';
+
+const hero = {
+    title: 'Create New Discussion',
+    description:
+        'Share your thoughts and start meaningful conversations with the community',
+    svgPath:
+        'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
+};
 
 const router = useRouter();
 const forumStore = useForumStore();

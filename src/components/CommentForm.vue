@@ -92,8 +92,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import { useForumStore } from '@/stores/forum';
-import { useAuthStore } from '@/stores/auth';
+import { useForumStore, useAuthStore } from '@/stores';
 import type { CreateCommentData } from '@/types';
 
 interface Props {
