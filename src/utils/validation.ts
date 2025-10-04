@@ -1,11 +1,11 @@
 import { VALIDATION_RULES } from '@/constants';
 
-export interface ValidationResult {
+interface ValidationResult {
     isValid: boolean;
     errors: Record<string, string>;
 }
 
-export const validateUsername = (username: string): string | null => {
+const validateUsername = (username: string): string | null => {
     if (!username || username.trim().length === 0) {
         return 'Username is required';
     }
@@ -25,7 +25,7 @@ export const validateUsername = (username: string): string | null => {
     return null;
 };
 
-export const validatePassword = (password: string): string | null => {
+const validatePassword = (password: string): string | null => {
     if (!password || password.length === 0) {
         return 'Password is required';
     }
@@ -37,7 +37,7 @@ export const validatePassword = (password: string): string | null => {
     return null;
 };
 
-export const validateConfirmPassword = (
+const validateConfirmPassword = (
     password: string,
     confirmPassword: string
 ): string | null => {
@@ -52,7 +52,7 @@ export const validateConfirmPassword = (
     return null;
 };
 
-export const validateEmail = (email: string): string | null => {
+const validateEmail = (email: string): string | null => {
     if (!email || email.trim().length === 0) {
         return 'Email is required';
     }
@@ -69,7 +69,7 @@ export const validateEmail = (email: string): string | null => {
     return null;
 };
 
-export const validateThreadTitle = (title: string): string | null => {
+const validateThreadTitle = (title: string): string | null => {
     if (!title || title.trim().length === 0) {
         return 'Thread title is required';
     }
@@ -85,7 +85,7 @@ export const validateThreadTitle = (title: string): string | null => {
     return null;
 };
 
-export const validateThreadContent = (content: string): string | null => {
+const validateThreadContent = (content: string): string | null => {
     if (!content || content.trim().length === 0) {
         return 'Thread content is required';
     }
@@ -96,22 +96,6 @@ export const validateThreadContent = (content: string): string | null => {
 
     if (content.length > VALIDATION_RULES.CONTENT.MAX_LENGTH) {
         return `Content must be no more than ${VALIDATION_RULES.CONTENT.MAX_LENGTH} characters`;
-    }
-
-    return null;
-};
-
-export const validateCommentContent = (content: string): string | null => {
-    if (!content || content.trim().length === 0) {
-        return 'Comment content is required';
-    }
-
-    if (content.length < VALIDATION_RULES.CONTENT.MIN_LENGTH) {
-        return `Comment must be at least ${VALIDATION_RULES.CONTENT.MIN_LENGTH} character`;
-    }
-
-    if (content.length > VALIDATION_RULES.CONTENT.MAX_LENGTH) {
-        return `Comment must be no more than ${VALIDATION_RULES.CONTENT.MAX_LENGTH} characters`;
     }
 
     return null;
@@ -185,27 +169,6 @@ export const validateCreateThreadData = (data: {
         isValid: Object.keys(errors).length === 0,
         errors,
     };
-};
-
-export const validateThreadId = (id: string): string | null => {
-    if (!id || typeof id !== 'string') {
-        return 'Thread ID is required';
-    }
-
-    const trimmedId = id.trim();
-    if (trimmedId.length === 0) {
-        return 'Thread ID cannot be empty';
-    }
-
-    if (trimmedId === 'undefined' || trimmedId === 'null') {
-        return 'Invalid thread ID format';
-    }
-
-    if (trimmedId.length < 3) {
-        return 'Thread ID is too short';
-    }
-
-    return null;
 };
 
 export const validateProfileUpdateData = (

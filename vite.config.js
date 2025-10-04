@@ -17,7 +17,7 @@ export default defineConfig({
         open: true,
         proxy: {
             '/api': {
-                target: 'https://clearless-hapi.vercel.app',
+                target: import.meta.env.VITE_API_URL,
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, ''),
             },

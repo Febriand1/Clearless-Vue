@@ -1,16 +1,9 @@
-
 export interface User {
     id: string;
     username: string;
     fullname: string;
     email: string;
     avatar?: string;
-}
-
-export interface AuthState {
-    user: User | null;
-    isAuthenticated: boolean;
-    token: string | null;
 }
 
 export interface LoginCredentials {
@@ -45,10 +38,6 @@ export interface RefreshTokenResponse {
     data: {
         accessToken: string;
     };
-}
-
-export interface RefreshTokenRequest {
-    refreshToken: string;
 }
 
 export interface UserResponse {
