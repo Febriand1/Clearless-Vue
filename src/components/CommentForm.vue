@@ -1,97 +1,63 @@
 <template>
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Add a Comment</h3>
+    <div :class="containerClass">
+        <div class="mb-2 flex items-center justify-between">
+            <h3 class="text-sm font-semibold text-slate-900">{{ headingText }}</h3>
+            <span v-if="isReply" class="text-[11px] text-slate-400">Replying publicly</span>
+        </div>
 
-        <form @submit.prevent="handleSubmit" class="space-y-4">
+        <form @submit.prevent="handleSubmit" class="space-y-3">
             <div>
-                <label
-                    for="content"
-                    class="block text-sm font-medium text-gray-700 mb-2"
-                >
-                    Your Comment
-                </label>
+                <label :for="textareaId" class="sr-only">{{ headingText }}</label>
                 <textarea
-                    id="content"
+                    :id="textareaId"
                     v-model="form.content"
-                    rows="4"
+                    rows="2"
                     required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Write your comment here..."
+                    class="w-full resize-none rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 placeholder-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                    :placeholder="placeholderText"
                 ></textarea>
             </div>
 
-            <div class="flex justify-end space-x-3">
+            <div class="flex items-center justify-end gap-2">
                 <button
                     type="button"
                     @click="handleCancel"
-                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    class="inline-flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
-                    :disabled="isSubmitting"
-                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    :disabled="isSubmitting || !form.content.trim()"
+                    class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     <svg
                         v-if="isSubmitting"
-                        class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline"
+                        class="h-4 w-4 animate-spin text-white"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
                     >
-                        <circle
-                            class="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            stroke-width="4"
-                        ></circle>
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                         <path
                             class="opacity-75"
                             fill="currentColor"
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
+                        />
                     </svg>
-                    {{ isSubmitting ? 'Posting...' : 'Post Comment' }}
+                    <span>{{ isSubmitting ? 'Sending…' : submitText }}</span>
                 </button>
             </div>
         </form>
 
-        <div
-            v-if="error"
-            class="mt-4 p-4 bg-red-50 border border-red-200 rounded-md"
-        >
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg
-                        class="h-5 w-5 text-red-400"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                        <path
-                            fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                            clip-rule="evenodd"
-                        />
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <h3 class="text-sm font-medium text-red-800">
-                        Error posting comment
-                    </h3>
-                    <div class="mt-2 text-sm text-red-700">
-                        {{ error }}
-                    </div>
-                </div>
-            </div>
+        <div v-if="error" class="mt-3 rounded-md border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+            {{ error }}
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, computed } from 'vue';
 import { useForumStore, useAuthStore } from '@/stores';
 import type { CreateCommentData } from '@/types';
 
@@ -121,9 +87,27 @@ const form = reactive<CreateCommentData>({
 const isSubmitting = ref(false);
 const error = ref('');
 
+const isReply = computed(() => !!props.commentId);
+const headingText = computed(() => (isReply.value ? 'Reply to comment' : 'Add a comment'));
+const placeholderText = computed(() =>
+    isReply.value ? 'Write a concise reply…' : 'Share your thoughts with the community…'
+);
+const submitText = computed(() => (isReply.value ? 'Post reply' : 'Post comment'));
+const textareaId = computed(() => `comment-textarea-${props.commentId ?? 'root'}`);
+const containerClass = computed(() =>
+    isReply.value
+        ? 'rounded-xl border border-slate-200 bg-slate-50 p-4 shadow-sm'
+        : 'rounded-xl border border-slate-200 bg-white p-5 shadow-sm'
+);
+
 const handleSubmit = async () => {
     if (!authStore.isAuthenticated) {
         error.value = 'You must be logged in to post a comment';
+        return;
+    }
+
+    if (!form.content.trim()) {
+        error.value = 'Please write something before submitting';
         return;
     }
 
