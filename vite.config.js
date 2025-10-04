@@ -12,15 +12,7 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url)),
         },
     },
-    server: {
-        port: 3000,
-        open: true,
-        proxy: {
-            '/api': {
-                target: import.meta.env.VITE_API_URL,
-                changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/api/, ''),
-            },
-        },
+    define: {
+        __API_URL__: JSON.stringify(process.env.VITE_API_URL || ''),
     },
 });
