@@ -51,7 +51,7 @@
                                 Bookmark
                             </button>
                             <router-link
-                                to="/create-thread"
+                                to="/thread/create"
                                 class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 rounded-lg text-sm font-medium text-white transition-all duration-200 shadow-md hover:shadow-lg"
                             >
                                 <svg

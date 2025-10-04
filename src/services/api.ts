@@ -63,21 +63,14 @@ export const authApi = {
 export const forumApi = {
     async getThreads(
         page: number = 1,
-        limit: number = 9
+        limit: number = 6
     ): Promise<{ threads: Thread[]; meta: PaginationMeta }> {
         const response = await api.get<ThreadsResponse>(
             `/threads?page=${page}&limit=${limit}`
         );
+        console.log('API Response for threads:', response.data);
         const responseData = response.data.data;
         const threadData = responseData.threads || [];
-
-        const getAvatarUrl = (avatar: string | undefined) => {
-            if (!avatar) return undefined;
-            if (avatar.startsWith('http')) return avatar;
-            if (avatar.startsWith('/'))
-                return `https://clearless-hapi.vercel.app${avatar}`;
-            return `https://clearless-hapi.vercel.app/${avatar}`;
-        };
 
         const threads: Thread[] = threadData.map(
             (t: any): Thread => ({
@@ -86,7 +79,7 @@ export const forumApi = {
                 body: t.body,
                 username: t.username,
                 userFullname: t.userFullname,
-                userAvatar: getAvatarUrl(t.userAvatar),
+                userAvatar: t.userAvatar, //getAvatarUrl(t.userAvatar),
                 date: t.date,
                 likeCount: t.likeCount ?? 0,
                 commentCount: t.commentCount ?? 0,
@@ -124,21 +117,13 @@ export const forumApi = {
             throw new Error('Thread data is invalid or missing');
         }
 
-        const getAvatarUrl = (avatar: string | undefined) => {
-            if (!avatar) return undefined;
-            if (avatar.startsWith('http')) return avatar;
-            if (avatar.startsWith('/'))
-                return `https://clearless-hapi.vercel.app${avatar}`;
-            return `https://clearless-hapi.vercel.app/${avatar}`;
-        };
-
         return {
             id: threadData.id,
             title: threadData.title,
             body: threadData.body,
             username: threadData.username,
-            userFullname: threadData.userFullname,
-            userAvatar: getAvatarUrl(threadData.userAvatar),
+            userFullname: threadData.fullname,
+            userAvatar: threadData.avatar, //getAvatarUrl(threadData.userAvatar),
             date: threadData.date,
             likeCount: threadData.likeCount || 0,
             isLiked: threadData.isLiked || false,

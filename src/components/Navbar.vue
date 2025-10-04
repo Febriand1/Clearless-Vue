@@ -15,7 +15,7 @@
                         class="flex items-center space-x-4"
                     >
                         <router-link
-                            to="/create-thread"
+                            to="/thread/create"
                             class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-indigo-100 hover:bg-indigo-200 transition-colors duration-200"
                         >
                             <svg
@@ -108,7 +108,7 @@
                                     </p>
                                 </div>
                                 <router-link
-                                    to="/create-thread"
+                                    to="/thread/create"
                                     class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                     @click="closeDropdown"
                                 >
