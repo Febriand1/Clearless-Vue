@@ -1,4 +1,5 @@
 import api from '@/utils/axiosConfig';
+import { useAuthStore } from '@/stores/auth';
 import type {
     Thread,
     Comment,
@@ -70,12 +71,22 @@ export const forumApi = {
         const responseData = response.data.data;
         const threadData = responseData.threads || [];
 
+        const getAvatarUrl = (avatar: string | undefined) => {
+            if (!avatar) return undefined;
+            if (avatar.startsWith('http')) return avatar;
+            if (avatar.startsWith('/'))
+                return `https://clearless-hapi.vercel.app${avatar}`;
+            return `https://clearless-hapi.vercel.app/${avatar}`;
+        };
+
         const threads: Thread[] = threadData.map(
             (t: any): Thread => ({
                 id: t.id,
                 title: t.title,
                 body: t.body,
                 username: t.username,
+                userFullname: t.userFullname,
+                userAvatar: getAvatarUrl(t.userAvatar),
                 date: t.date,
                 likeCount: t.likeCount ?? 0,
                 commentCount: t.commentCount ?? 0,
@@ -91,13 +102,43 @@ export const forumApi = {
 
     async getThread(id: string): Promise<Thread> {
         const response = await api.get(`/threads/${id}`);
+
+        // Add debugging to see what's in the response
+        console.log('API Response for thread:', response.data);
+
+        // Check if response structure is correct
+        if (
+            !response.data ||
+            !response.data.data ||
+            !response.data.data.thread
+        ) {
+            console.error('Invalid response structure:', response.data);
+            throw new Error('Invalid response structure from API');
+        }
+
         const threadData = response.data.data.thread;
+
+        // Check if thread data is valid
+        if (!threadData || !threadData.id) {
+            console.error('Invalid thread data:', threadData);
+            throw new Error('Thread data is invalid or missing');
+        }
+
+        const getAvatarUrl = (avatar: string | undefined) => {
+            if (!avatar) return undefined;
+            if (avatar.startsWith('http')) return avatar;
+            if (avatar.startsWith('/'))
+                return `https://clearless-hapi.vercel.app${avatar}`;
+            return `https://clearless-hapi.vercel.app/${avatar}`;
+        };
 
         return {
             id: threadData.id,
             title: threadData.title,
             body: threadData.body,
             username: threadData.username,
+            userFullname: threadData.userFullname,
+            userAvatar: getAvatarUrl(threadData.userAvatar),
             date: threadData.date,
             likeCount: threadData.likeCount || 0,
             isLiked: threadData.isLiked || false,
@@ -123,11 +164,37 @@ export const forumApi = {
         });
 
         const commentData = response.data.data.addedComment;
+        const authStore = useAuthStore();
+        const currentUser = authStore.user;
+
+        const getAvatarUrl = (avatar: string | undefined) => {
+            if (!avatar) return undefined;
+            if (avatar.startsWith('http')) return avatar;
+            if (avatar.startsWith('/'))
+                return `https://clearless-hapi.vercel.app${avatar}`;
+            return `https://clearless-hapi.vercel.app/${avatar}`;
+        };
 
         return {
             id: commentData.id,
             content: commentData.content,
-            username: commentData.owner || 'Unknown',
+            username:
+                currentUser?.username ||
+                commentData.username ||
+                commentData.owner ||
+                'Unknown',
+            userFullname:
+                currentUser?.fullname ||
+                commentData.userFullname ||
+                commentData.username ||
+                commentData.owner,
+            userAvatar: getAvatarUrl(
+                currentUser?.avatar || commentData.userAvatar
+            ),
+            date: commentData.date || new Date().toISOString(),
+            threadId: data.threadId,
+            isLiked: false,
+            likeCount: 0,
         };
     },
 
@@ -174,11 +241,38 @@ export const forumApi = {
         );
 
         const replyData = response.data.data.addedReply;
+        const authStore = useAuthStore();
+        const currentUser = authStore.user;
+
+        const getAvatarUrl = (avatar: string | undefined) => {
+            if (!avatar) return undefined;
+            if (avatar.startsWith('http')) return avatar;
+            if (avatar.startsWith('/'))
+                return `https://clearless-hapi.vercel.app${avatar}`;
+            return `https://clearless-hapi.vercel.app/${avatar}`;
+        };
 
         return {
             id: replyData.id,
             content: replyData.content,
-            username: replyData.owner || 'Unknown',
+            username:
+                currentUser?.username ||
+                replyData.username ||
+                replyData.owner ||
+                'Unknown',
+            userFullname:
+                currentUser?.fullname ||
+                replyData.userFullname ||
+                replyData.username ||
+                replyData.owner,
+            userAvatar: getAvatarUrl(
+                currentUser?.avatar || replyData.userAvatar
+            ),
+            date: replyData.date || new Date().toISOString(),
+            threadId: data.threadId,
+            commentId: data.commentId,
+            isLiked: false,
+            likeCount: 0,
         };
     },
 };
