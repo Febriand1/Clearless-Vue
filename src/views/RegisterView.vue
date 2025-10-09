@@ -119,7 +119,7 @@ const handleRegister = async () => {
             confirmPassword,
         });
         if (result.success) {
-            router.push('/login');
+            router.push('/verify-email');
         } else {
             formState.errors.general = result.error || 'Registration failed';
         }

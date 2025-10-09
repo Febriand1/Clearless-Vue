@@ -50,12 +50,29 @@ export const useAuthStore = defineStore('auth', () => {
         }
     };
 
-    const logout = (): void => {
-        user.value = null;
-        token.value = null;
-        refreshToken.value = null;
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
+    const verifyEmail = async (code: string): Promise<StoreActionResult> => {
+        try {
+            await authApi.verifyEmail(code);
+            return { success: true };
+        } catch (error) {
+            return handleApiError(error);
+        }
+    };
+
+    const logout = async (): Promise<void> => {
+        try {
+            if (refreshToken.value) {
+                await authApi.logout(refreshToken.value);
+            }
+        } catch (error) {
+            console.error('Failed to revoke authentication on server:', error);
+        } finally {
+            user.value = null;
+            token.value = null;
+            refreshToken.value = null;
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+        }
     };
 
     const updateProfile = async (
@@ -93,7 +110,7 @@ export const useAuthStore = defineStore('auth', () => {
             localStorage.setItem('token', response.data.accessToken);
             return true;
         } catch (error) {
-            logout();
+            await logout();
             return false;
         }
     };
@@ -110,7 +127,7 @@ export const useAuthStore = defineStore('auth', () => {
                         const response = await authApi.me();
                         user.value = response.data.user;
                     } catch (refreshError) {
-                        logout();
+                        await logout();
                     }
                 }
             }
@@ -140,5 +157,6 @@ export const useAuthStore = defineStore('auth', () => {
         logout,
         checkAuth,
         refreshAccessToken,
+        verifyEmail,
     };
 });

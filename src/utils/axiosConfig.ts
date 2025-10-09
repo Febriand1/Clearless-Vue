@@ -45,7 +45,7 @@ api.interceptors.response.use(
             } catch (refreshError) {
                 console.error('Token refresh failed:', refreshError);
                 const authStore = useAuthStore();
-                authStore.logout();
+                await authStore.logout();
                 window.location.href = '/login';
                 return Promise.reject(refreshError);
             }

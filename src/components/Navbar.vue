@@ -208,8 +208,8 @@ const closeDropdown = (): void => {
     isDropdownOpen.value = false;
 };
 
-const handleLogout = (): void => {
-    authStore.logout();
+const handleLogout = async (): Promise<void> => {
+    await authStore.logout();
     router.push('/login');
     closeDropdown();
 };

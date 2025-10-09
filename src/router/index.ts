@@ -41,6 +41,12 @@ const router = createRouter({
             component: () => import('@/views/ProfileView.vue'),
             meta: { requiresAuth: true, title: 'Clearless - Profile' },
         },
+        {
+            path: '/verify-email',
+            name: 'VerifyEmail',
+            component: () => import('@/views/VerifyEmailView.vue'),
+            meta: { requiresGuest: true, title: 'Clearless - Verify Email' },
+        },
     ],
 });
 

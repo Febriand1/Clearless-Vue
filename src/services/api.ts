@@ -17,6 +17,7 @@ import type {
     LikeResponse,
     ThreadsResponse,
     PaginationMeta,
+    StoreActionResult,
 } from '@/types';
 
 export const authApi = {
@@ -25,8 +26,33 @@ export const authApi = {
         return response.data;
     },
 
+    async refreshToken(refreshToken: string): Promise<RefreshTokenResponse> {
+        const response = await api.put('/authentications', { refreshToken });
+        return response.data;
+    },
+
+    async logout(refreshToken: string): Promise<void> {
+        await api.delete('/authentications', {
+            data: { refreshToken },
+        });
+    },
+
     async register(credentials: RegisterCredentials): Promise<AuthResponse> {
         const response = await api.post('/users', credentials);
+        localStorage.setItem(
+            'pendingEmail',
+            response.data.data.addedUser.email
+        );
+        return response.data;
+    },
+
+    async verifyEmail(code: string): Promise<StoreActionResult> {
+        const email = localStorage.getItem('pendingEmail');
+        const response = await api.post('/users/verify-email', {
+            email,
+            code,
+        });
+        localStorage.removeItem('pendingEmail');
         return response.data;
     },
 
@@ -46,11 +72,6 @@ export const authApi = {
                 'Content-Type': 'multipart/form-data',
             },
         });
-        return response.data;
-    },
-
-    async refreshToken(refreshToken: string): Promise<RefreshTokenResponse> {
-        const response = await api.put('/authentications', { refreshToken });
         return response.data;
     },
 
@@ -78,8 +99,8 @@ export const forumApi = {
                 title: t.title,
                 body: t.body,
                 username: t.username,
-                userFullname: t.fullname,
-                userAvatar: t.avatar,
+                userFullname: t.fullname ?? t.owner?.fullname ?? t.username,
+                userAvatar: t.avatar ?? t.owner?.avatar ?? undefined,
                 date: t.date,
                 likeCount: t.likeCount ?? 0,
                 commentCount: t.commentCount ?? 0,
@@ -122,12 +143,16 @@ export const forumApi = {
             title: threadData.title,
             body: threadData.body,
             username: threadData.username,
-            userFullname: threadData.fullname,
-            userAvatar: threadData.avatar, //getAvatarUrl(threadData.userAvatar),
+            userFullname:
+                threadData.fullname ??
+                threadData.owner?.fullname ??
+                threadData.username,
+            userAvatar:
+                threadData.avatar ?? threadData.owner?.avatar ?? undefined,
             date: threadData.date,
             likeCount: threadData.likeCount || 0,
             isLiked: threadData.isLiked || false,
-            comments: threadData.comments || [],
+            comments: [],
         };
     },
 
@@ -140,6 +165,10 @@ export const forumApi = {
             title: threadData.title,
             username: data.owner,
         };
+    },
+
+    async deleteThread(threadId: string): Promise<void> {
+        await api.delete(`/threads/${threadId}`);
     },
 
     async createComment(data: CreateCommentData): Promise<Comment> {
@@ -162,16 +191,100 @@ export const forumApi = {
                 'Unknown',
             userFullname:
                 currentUser?.fullname ||
+                commentData.fullname ||
                 commentData.userFullname ||
                 commentData.username ||
                 commentData.owner,
-            userAvatar: currentUser?.avatar || commentData.userAvatar,
+            userAvatar:
+                currentUser?.avatar ||
+                commentData.userAvatar ||
+                commentData.avatar,
 
             date: commentData.date || new Date().toISOString(),
             threadId: data.threadId,
             isLiked: false,
             likeCount: 0,
+            replies: [],
         };
+    },
+
+    async deleteComment(threadId: string, commentId: string): Promise<void> {
+        await api.delete(`/threads/${threadId}/comments/${commentId}`);
+    },
+
+    async getThreadComments(threadId: string): Promise<Comment[]> {
+        const response = await api.get(`/threads/${threadId}/comments`);
+        const responseData = response.data?.data;
+        const commentData = responseData?.comments ?? [];
+
+        return commentData.map(
+            (comment: any): Comment => ({
+                id: comment.id,
+                content: comment.content,
+                username: comment.username ?? comment.owner ?? 'Unknown',
+                userFullname:
+                    comment.fullname ??
+                    comment.userFullname ??
+                    comment.username ??
+                    comment.owner ??
+                    'Unknown User',
+                userAvatar:
+                    comment.avatar ??
+                    comment.userAvatar ??
+                    comment.owner?.avatar ??
+                    undefined,
+                date: comment.date,
+                threadId,
+                likeCount: comment.likeCount ?? 0,
+                isLiked: comment.isLiked ?? false,
+                replies: [],
+            })
+        );
+    },
+
+    async getCommentReplies(
+        threadId: string,
+        commentId: string
+    ): Promise<Reply[]> {
+        const response = await api.get(
+            `/threads/${threadId}/comments/${commentId}/replies`
+        );
+        const responseData = response.data?.data;
+        const replyData = responseData?.replies ?? [];
+
+        return replyData.map(
+            (reply: any): Reply => ({
+                id: reply.id,
+                content: reply.content,
+                username: reply.username ?? reply.owner ?? 'Unknown',
+                userFullname:
+                    reply.fullname ??
+                    reply.userFullname ??
+                    reply.username ??
+                    reply.owner ??
+                    'Unknown User',
+                userAvatar:
+                    reply.avatar ??
+                    reply.userAvatar ??
+                    reply.owner?.avatar ??
+                    undefined,
+                date: reply.date,
+                threadId,
+                commentId,
+                isLiked: reply.isLiked ?? false,
+                likeCount: reply.likeCount ?? 0,
+            })
+        );
+    },
+
+    async deleteReply(
+        threadId: string,
+        commentId: string,
+        replyId: string
+    ): Promise<void> {
+        await api.delete(
+            `/threads/${threadId}/comments/${commentId}/replies/${replyId}`
+        );
     },
 
     async likeThread(
@@ -230,10 +343,12 @@ export const forumApi = {
                 'Unknown',
             userFullname:
                 currentUser?.fullname ||
+                replyData.fullname ||
                 replyData.userFullname ||
                 replyData.username ||
                 replyData.owner,
-            userAvatar: currentUser?.avatar || replyData.userAvatar,
+            userAvatar:
+                currentUser?.avatar || replyData.userAvatar || replyData.avatar,
             date: replyData.date || new Date().toISOString(),
             threadId: data.threadId,
             commentId: data.commentId,
