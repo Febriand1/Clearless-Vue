@@ -121,7 +121,7 @@ const handleRegister = async () => {
         if (result.success) {
             router.push('/verify-email');
         } else {
-            formState.errors.general = result.error || 'Registration failed';
+            formState.errors.general = result.error || 'Registration failed.';
         }
     } catch (err) {
         formState.errors.general = 'An error occurred during registration';
